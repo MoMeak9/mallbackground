@@ -1,13 +1,6 @@
 <template>
   <div id="admin-home">
-    <el-header>
-      <el-menu default-active="/adminHome" class="el-menu-demo" mode="horizontal" router="true">
-        <el-menu-item index="/">首页</el-menu-item>
-        <el-menu-item index="/search">搜索</el-menu-item>
-        <el-menu-item index="/adminHome">管理中心</el-menu-item>
-        <el-menu-item index="/user">个人中心</el-menu-item>
-      </el-menu>
-    </el-header>
+    <h1>转小二后台管理系统</h1>
     <div class="content">
       <el-tabs v-model="tabActive">
         <el-tab-pane label="账号管理" name="first">
@@ -98,7 +91,8 @@
               </el-table-column>
               <el-table-column label="账号操作">
                 <template slot-scope="scope">
-                  <el-button type="success" @click="changeAuthentication(scope.row.userNo,2)" v-if="scope.row.authentication!==2&&scope.row.authentication!==0">
+                  <el-button type="success" @click="changeAuthentication(scope.row.userNo,2)"
+                             v-if="scope.row.authentication!==2&&scope.row.authentication!==0">
                     通过
                   </el-button>
                   <el-button type="danger" @click="changeAuthentication(scope.row.userNo,3)"
