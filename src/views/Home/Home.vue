@@ -1,9 +1,43 @@
 <template>
   <div id="admin-home">
-    <h1>转小二后台管理系统</h1>
+    <aside style="z-index: 99;position: absolute">
+      <el-menu default-active="1-4-1" class="el-menu-vertical-demo"
+               :collapse="isCollapse">
+        <el-menu-item index="1" @click="isCollapse=!isCollapse">
+          <i class="el-icon-menu"></i>
+          <span slot="title"><a v-if="isCollapse">展开</a><a v-else>关闭</a></span>
+        </el-menu-item>
+        <el-menu-item index="2" @click="tabActive='1'">
+          <i class="el-icon-menu"></i>
+          <span slot="title">数据监控</span>
+        </el-menu-item>
+        <el-menu-item index="3" disabled>
+          <i class="el-icon-document"></i>
+          <span slot="title">账号管理</span>
+        </el-menu-item>
+        <el-menu-item index="4">
+          <i class="el-icon-setting"></i>
+          <span slot="title">商品管理</span>
+        </el-menu-item>
+        <el-menu-item index="5">
+          <i class="el-icon-setting"></i>
+          <span slot="title">用户审核</span>
+        </el-menu-item>
+        <el-menu-item index="6">
+          <i class="el-icon-setting"></i>
+          <span slot="title">登出</span>
+        </el-menu-item>
+      </el-menu>
+    </aside>
     <div class="content">
+      <header><h1>”转小二“管理中心</h1></header>
       <el-tabs v-model="tabActive">
-        <el-tab-pane label="账号管理" name="first">
+        <el-tab-pane label="数据监控" name="1">
+          <div class="item-reg">
+            sssss
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="账号管理" name="2">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
               <el-table-column prop="lastLoginTime" label="最后登入日期" width></el-table-column>
@@ -28,7 +62,7 @@
           </div>
         </el-tab-pane>
         <!--        管理所有商品  可筛选-->
-        <el-tab-pane label="商品管理" name="second">
+        <el-tab-pane label="商品管理" name="3">
           <div class="item-audit">
             <el-table :data="commList" style="width: 100%" height="90vh" stripe
                       :default-sort="{prop: 'commodity.commName', order: 'increasing'}">
@@ -67,7 +101,7 @@
           </div>
         </el-tab-pane>
         <!--        学院信息审核-->
-        <el-tab-pane label="认证审核" name="third">
+        <el-tab-pane label="认证审核" name="4">
           <div class="item-reg">
             <el-table :data="userList" style="width: 100%">
               <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
@@ -112,8 +146,9 @@ export default {
   comments: {},
   data() {
     return {
+      isCollapse: true,
       userName: '',
-      tabActive: 'first',
+      tabActive: '1',
       allUsers: [],
       auditCommos: [],
       userList: [],
@@ -337,11 +372,18 @@ export default {
   height: 100vh;
   background-color: #f5f5f5;
   position: relative;
+  .el-menu{
+    height: 100vh;
+  }
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 200px;
+    height: 100vh;
+  }
 
   .content {
     background-color: white;
     width: 90%;
-    margin: 30px auto;
+    margin: 0 auto;
     padding: 1rem;
     border-radius: 5px;
     box-shadow: 10px 5px 30px #99a9bf;
