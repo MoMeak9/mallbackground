@@ -46,7 +46,7 @@ export default {
         })
       } else {
         this.$axios.post('/shop/user/login', this.$qs.stringify({
-          userEmail: this.email,
+          userEmail: this.userEmail,
           userPassword: this.password,
         })).then((resp) => {
           const data = resp.data

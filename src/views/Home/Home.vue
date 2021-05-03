@@ -32,9 +32,10 @@
     <div class="content">
       <header><h1>”转小二“管理中心</h1></header>
       <el-tabs v-model="tabActive">
+        <!--        数据统计展示-->
         <el-tab-pane label="数据监控" name="1">
           <div class="item-reg">
-            sssss
+            <Echarts></Echarts>
           </div>
         </el-tab-pane>
         <el-tab-pane label="账号管理" name="2">
@@ -142,6 +143,8 @@
   </div>
 </template>
 <script>
+import Echarts from "@/components/Echarts";
+
 export default {
   comments: {},
   data() {
@@ -158,6 +161,9 @@ export default {
       auditMsg: '',
       activeIndex: '/adminHome'
     }
+  },
+  components:{
+    Echarts
   },
   methods: {
     //审核通过
@@ -360,9 +366,9 @@ export default {
     this.userBean = this.$store.state.userBean
     console.log(this.token)
     this.$nextTick(function () {
-      if (this.token === '') {
+      if (this.token === '' || this.token === null) {
         this.$notify({
-          title:'错误',
+          title: '错误',
           message: '用户未登录！即将返回登录页面',
           type: 'error'
         });

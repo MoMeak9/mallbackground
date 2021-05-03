@@ -34,3 +34,6 @@ Vue.prototype.$axios = axios;
 
 import qs from 'qs'
 Vue.prototype.$qs = qs;
+
+import echarts from "echarts";
+Vue.prototype.$echarts = echarts;
