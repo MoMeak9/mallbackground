@@ -4,7 +4,7 @@
     <el-form class="login-container" label-position="left" label-width="0px">
       <h3 class="login_title">转小二后台管理系统</h3>
       <el-form-item style="user-select: none;">
-        <el-input type="text" v-model="userName" placeholder="请输入账号..."></el-input>
+        <el-input type="text" v-model="userEmail" placeholder="请输入账号..."></el-input>
       </el-form-item>
 
       <el-form-item style="user-select: none;">
@@ -68,7 +68,7 @@ export default {
                 message: '欢迎您，管理员',
                 type: 'success'
               })
-              this.$router.push({path: '/adminHome'})
+              this.$router.push({path: '/home'})
             }
           } else {
             this.$notify.error({

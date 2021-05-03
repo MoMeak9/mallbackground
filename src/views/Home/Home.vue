@@ -4,27 +4,27 @@
       <el-menu default-active="1-4-1" class="el-menu-vertical-demo"
                :collapse="isCollapse">
         <el-menu-item index="1" @click="isCollapse=!isCollapse">
-          <i class="el-icon-menu"></i>
+          <i class="el-icon-caret-right" v-if="isCollapse"></i><i class="el-icon-caret-left" v-else></i>
           <span slot="title"><a v-if="isCollapse">展开</a><a v-else>关闭</a></span>
         </el-menu-item>
         <el-menu-item index="2" @click="tabActive='1'">
-          <i class="el-icon-menu"></i>
+          <i class="el-icon-s-data"></i>
           <span slot="title">数据监控</span>
         </el-menu-item>
-        <el-menu-item index="3" disabled>
-          <i class="el-icon-document"></i>
+        <el-menu-item index="3" @click="tabActive='2'">
+          <i class="el-icon-s-custom"></i>
           <span slot="title">账号管理</span>
         </el-menu-item>
-        <el-menu-item index="4">
-          <i class="el-icon-setting"></i>
+        <el-menu-item index="4" @click="tabActive='3'">
+          <i class="el-icon-s-shop"></i>
           <span slot="title">商品管理</span>
         </el-menu-item>
-        <el-menu-item index="5">
-          <i class="el-icon-setting"></i>
+        <el-menu-item index="5" @click="tabActive='4'">
+          <i class="el-icon-s-claim"></i>
           <span slot="title">用户审核</span>
         </el-menu-item>
-        <el-menu-item index="6">
-          <i class="el-icon-setting"></i>
+        <el-menu-item index="6" @click="logOut">
+          <i class="el-icon-close"></i>
           <span slot="title">登出</span>
         </el-menu-item>
       </el-menu>
@@ -64,7 +64,7 @@
         <!--        管理所有商品  可筛选-->
         <el-tab-pane label="商品管理" name="3">
           <div class="item-audit">
-            <el-table :data="commList" style="width: 100%" height="90vh" stripe
+            <el-table :data="commList" stripe
                       :default-sort="{prop: 'commodity.commName', order: 'increasing'}">
               <el-table-column label="图片" width="120">
                 <template slot-scope="scope">
@@ -153,7 +153,8 @@ export default {
       auditCommos: [],
       userList: [],
       commList: [],
-      token: this.$store.state.token,
+      token: '',
+      userBean: '',
       auditMsg: '',
       activeIndex: '/adminHome'
     }
@@ -347,13 +348,21 @@ export default {
     goBack() {
       this.$router.push({path: '/user'})
     },
+    //登出
+    logOut() {
+      this.$store.commit('LOGOUT')
+      this.$store.commit('DEL_TOKEN')
+      this.$router.push({path: '/login'})
+    }
   },
   mounted() {
     this.token = this.$store.state.token
+    this.userBean = this.$store.state.userBean
     console.log(this.token)
     this.$nextTick(function () {
       if (this.token === '') {
-        this.$message({
+        this.$notify({
+          title:'错误',
           message: '用户未登录！即将返回登录页面',
           type: 'error'
         });
@@ -372,9 +381,11 @@ export default {
   height: 100vh;
   background-color: #f5f5f5;
   position: relative;
-  .el-menu{
+
+  .el-menu {
     height: 100vh;
   }
+
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
     height: 100vh;
