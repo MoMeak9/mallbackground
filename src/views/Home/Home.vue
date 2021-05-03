@@ -44,7 +44,7 @@
               <el-table-column prop="lastLoginTime" label="最后登入日期" width></el-table-column>
               <el-table-column prop="userName" label="用户名" width="180"></el-table-column>
               <el-table-column prop="userEmail" label="邮箱" width="180"></el-table-column>
-              <el-table-column prop="userNo" label="编号" width=""></el-table-column>
+              <el-table-column prop="userNo" label="UUID" width=""></el-table-column>
               <el-table-column prop="isBan" label="账号状态" width="180">
                 <div slot-scope="scope">
                   <div v-if="scope.row.isBan === 0">正常</div>
@@ -60,6 +60,14 @@
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination
+                @current-change="changeUserList()"
+                background
+                :current-page="userListCurrent"
+                :pager-count="11"
+                layout="prev, pager, next"
+                :page-count="userListPages">
+            </el-pagination>
           </div>
         </el-tab-pane>
         <!--        管理所有商品  可筛选-->
@@ -73,32 +81,40 @@
                             style="width: 70px;height: 70px"></el-image>
                 </template>
               </el-table-column>
-              <el-table-column prop="commName" label="名称" sortable></el-table-column>
-              <el-table-column prop="commNo" label="单号"></el-table-column>
-              <el-table-column prop="commDesc" label="简述"></el-table-column>
-              <el-table-column prop="userName" label="创建者" width="180" sortable></el-table-column>
-              <el-table-column prop="auditStatus" label="审核状态" sortable
-                               :filters="[{text: '待审核', value: 0},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
+              <el-table-column prop="commodity.commName" label="名称" sortable></el-table-column>
+              <el-table-column prop="commodity.commNo" label="单号"></el-table-column>
+              <el-table-column prop="commodity.commDesc" label="简述"></el-table-column>
+              <el-table-column prop="commodity.userName" label="创建者" width="180" sortable></el-table-column>
+              <el-table-column prop="commodity.auditStatus" label="审核状态" sortable
+                               :filters="[{text: '待审核', value: '0'},{text: '审核通过', value: 1},{text: '驳回', value: 2}]"
                                :filter-method="filterHandler">
                 <div slot-scope="scope">
-                  <div v-if="scope.row.auditStatus === 0">待审核</div>
-                  <div v-else-if="scope.row.auditStatus === 1">审核通过</div>
+                  <div v-if="scope.row.commodity.auditStatus === 0">待审核</div>
+                  <div v-else-if="scope.row.commodity.auditStatus === 1">审核通过</div>
                   <div v-else>驳回</div>
                 </div>
               </el-table-column>
               <el-table-column label="商品操作" width="300">
                 <template slot-scope="scope">
-                  <el-button type="primary" @click="checkCommo(scope.row.commNo)" size="small">查看
+                  <el-button type="primary" @click="checkCommo(scope.row.commodity.commNo)" size="small">查看
                   </el-button>
-                  <el-button type="primary" @click="allowCommo(scope.row.commNo)" size="small"
-                             v-show="scope.row.auditStatus===0||scope.row.auditStatus===2">通过
+                  <el-button type="primary" @click="allowCommo(scope.row.commodity.commNo)" size="small"
+                             v-show="scope.row.commodity.auditStatus===0||scope.row.auditStatus===2">通过
                   </el-button>
-                  <el-button type="danger" @click="refuseCommo(scope.row.commNo)" size="small"
-                             v-show="scope.row.auditStatus===0||scope.row.auditStatus===1">拒绝
+                  <el-button type="danger" @click="refuseCommo(scope.row.commodity.commNo)" size="small"
+                             v-show="scope.row.commodity.auditStatus===0||scope.row.commodity.auditStatus===1">拒绝
                   </el-button>
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination
+                @current-change="changeCommList"
+                background
+                :current-page="commListCurrent"
+                :pager-count="11"
+                layout="prev, pager, next"
+                :page-count="commListPages">
+            </el-pagination>
           </div>
         </el-tab-pane>
         <!--        学院信息审核-->
@@ -136,6 +152,14 @@
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination
+                @current-change="changeUserList()"
+                background
+                :current-page="userListCurrent"
+                :pager-count="11"
+                layout="prev, pager, next"
+                :page-count="userListPages">
+            </el-pagination>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -159,10 +183,14 @@ export default {
       token: '',
       userBean: '',
       auditMsg: '',
-      activeIndex: '/adminHome'
+      activeIndex: '/adminHome',
+      userListCurrent: 1,
+      userListPages: 1,
+      commListCurrent: 1,
+      commListPages: 1,
     }
   },
-  components:{
+  components: {
     Echarts
   },
   methods: {
@@ -305,7 +333,10 @@ export default {
     },
     //用户列表
     getUserList() {
-      this.$axios.post('/shop/admin/userList', {}, {
+      this.$axios.post('/shop/admin/userList', this.$qs.stringify({
+        current: this.userListCurrent,
+        size: '10'
+      }), {
         headers: {
           Authorization: this.token
         }
@@ -313,7 +344,28 @@ export default {
         var data = resp.data
         console.log(data)
         if (data.code === 1) {
-          this.userList = data.obj
+          this.userListPages = data.obj.pages
+          this.userList = data.obj.obj
+          for (let i = 0; i < this.userList.length; i++) {
+            this.userList[i].lastLoginTime = this.rTime(this.userList[i].lastLoginTime);
+          }
+        }
+      })
+    },
+    changeUserList(val){
+      this.$axios.post('/shop/admin/userList', this.$qs.stringify({
+        current: val,
+        size: '10'
+      }), {
+        headers: {
+          Authorization: this.token
+        }
+      }).then(resp => {
+        var data = resp.data
+        console.log(data)
+        if (data.code === 1) {
+          this.userListPages = data.obj.pages
+          this.userList = data.obj.obj
           for (let i = 0; i < this.userList.length; i++) {
             this.userList[i].lastLoginTime = this.rTime(this.userList[i].lastLoginTime);
           }
@@ -325,12 +377,35 @@ export default {
       this.$axios.get('/shop/admin/commList', {
         headers: {
           Authorization: this.token
+        },
+        params: {
+          current: 1,
+          size: 10
         }
       }).then(resp => {
         console.log(resp)
         var data = resp.data
         if (data.code === 1) {
-          this.commList = data.obj
+          this.commList = data.obj.obj
+          this.commListPages = data.obj.pages
+        }
+      })
+    },
+    changeCommList(val) {
+      this.$axios.get('/shop/admin/commList', {
+        headers: {
+          Authorization: this.token
+        },
+        params: {
+          current: val,
+          size: 10
+        }
+      }).then(resp => {
+        console.log(resp)
+        var data = resp.data
+        if (data.code === 1) {
+          this.commList = data.obj.obj
+          this.commListPages = data.obj.pages
         }
       })
     },
@@ -395,6 +470,11 @@ export default {
 
   .el-menu {
     height: 100vh;
+  }
+
+  .el-pagination {
+    text-align: center;
+    margin-top: 15px
   }
 
   .el-menu-vertical-demo:not(.el-menu--collapse) {
