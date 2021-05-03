@@ -358,6 +358,11 @@ export default {
     logOut() {
       this.$store.commit('LOGOUT')
       this.$store.commit('DEL_TOKEN')
+      this.$notify({
+        title: '成功',
+        message: '退出系统',
+        type: 'success'
+      })
       this.$router.push({path: '/login'})
     }
   },

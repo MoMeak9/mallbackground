@@ -94,13 +94,12 @@ export default {
 }
 
 .login-container {
-  border-radius: 15px;
+  border-radius: 10px;
   background-clip: padding-box;
   margin: 90px auto;
   width: 350px;
   padding: 35px 35px 15px 35px;
   background: rgba(0, 0, 0, 0.4);
-  border: 5px solid #eaeaea;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
   position: relative;
   z-index: 3;
@@ -111,29 +110,6 @@ export default {
   text-align: center;
   color: #f3f9f1;
   user-select: none;
-}
-
-#particles-js {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: 50% 50%;
-  z-index: 1;
-}
-
-.button-register {
-  width: 100%;
-  background: rgba(45, 45, 45, 0.33);
-  border: 1px solid #40E0D0;
-}
-
-.button-register:hover {
-  width: 100%;
-  background: rgba(45, 45, 45, 0.33);
-  border: 1px solid #40E0D0;
-  box-shadow: 0 0 25px rgba(64, 224, 208, .5);
 }
 
 .button-login {
